@@ -23,7 +23,7 @@ namespace MobileFramework.Setup
                 .WithLogFile(new System.IO.FileInfo("appium_log.txt")).WithArguments(opt);
             //.WithAppiumJS(new System.IO.FileInfo(@"C:\Users\JiDi\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js"));
 
-            _service = builder.Build(); //uses port - 4723 
+            _service = builder.Build();  
             _service.Start();
 
             AppiumOptions option = new AppiumOptions();

@@ -14,6 +14,10 @@ namespace MobileFramework
     [TestClass]
     public class LoginTest : AppiumSetup
     {
+
+        //john,john123,There was an issue signing in
+        //peter,peter123,There was an issue signing in
+
         [TestMethod]
         public void InvalidCredentialTest()
         {
