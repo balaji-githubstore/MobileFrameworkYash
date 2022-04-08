@@ -21,7 +21,9 @@ namespace MobileFramework
             OptionCollector opt = new OptionCollector()
                 .AddArguments(GeneralOptionList.OverrideSession())
                 .AddArguments(new KeyValuePair<string, string>("--relaxed-security", string.Empty));
-            AppiumServiceBuilder builder = new AppiumServiceBuilder().UsingAnyFreePort().WithArguments(opt);
+            AppiumServiceBuilder builder = new AppiumServiceBuilder().UsingAnyFreePort()
+                .WithLogFile(new System.IO.FileInfo("appium_log.txt")).WithArguments(opt);
+                //.WithAppiumJS(new System.IO.FileInfo(@"C:\Users\JiDi\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js"));
 
             AppiumLocalService service = builder.Build(); //uses port - 4723 
             service.Start();
@@ -57,7 +59,7 @@ namespace MobileFramework
             String actualError = driver.FindElementByXPath("//*[contains(@text,'issue')]").Text;
             Console.WriteLine(actualError);
 
-           // Assert.AreEqual("There is an issue",actualError);
+            Assert.AreEqual("There was an issue signing in", actualError);
 
             Thread.Sleep(5000);
             driver.Quit();
