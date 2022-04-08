@@ -22,8 +22,9 @@ namespace MobileFramework
         [TestMethod]
         [DataRow("john", "john123", "There was an issue signing in")]
         [DataRow("peter", "peter123", "There was an issue signing in")]
-        public void InvalidCredentialTest(string username,string password,string expectedError)
+        public void InvalidCredentialTest(string username, string password, string expectedError)
         {
+            
             if (driver.FindElementsByXPath("//*[@text='Dismiss']").Count > 0)
             {
                 driver.FindElementByXPath("//*[@text='Dismiss']").Click();
