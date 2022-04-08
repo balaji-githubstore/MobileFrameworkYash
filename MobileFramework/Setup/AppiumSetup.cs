@@ -16,6 +16,7 @@ namespace MobileFramework.Setup
         [TestInitialize]
         public void Setup()
         {
+            
             OptionCollector opt = new OptionCollector()
                   .AddArguments(GeneralOptionList.OverrideSession())
                   .AddArguments(new KeyValuePair<string, string>("--relaxed-security", string.Empty));

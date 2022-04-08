@@ -19,7 +19,9 @@ namespace MobileFramework
         //peter,peter123,There was an issue signing in
 
         [TestMethod]
-        public void InvalidCredentialTest()
+        [DataRow("john", "john123", "There was an issue signing in")]
+        [DataRow("peter", "peter123", "There was an issue signing in")]
+        public void InvalidCredentialTest(string username,string password,string expectedError)
         {
             if (driver.FindElementsByXPath("//*[@text='Dismiss']").Count > 0)
             {
@@ -27,8 +29,8 @@ namespace MobileFramework
             }
             driver.FindElementByXPath("//*[@text='Sign in']").Click();
             driver.FindElementByXPath("//*[@text='Sign in']").Click();
-            driver.FindElementByXPath("//*[@content-desc='Enter an e-mail address or username']").SendKeys("test@gmail.com");
-            driver.FindElementByXPath("//*[contains(@text,'Pass')]").SendKeys("pass@123");
+            driver.FindElementByXPath("//*[@content-desc='Enter an e-mail address or username']").SendKeys(username);
+            driver.FindElementByXPath("//*[contains(@text,'Pass')]").SendKeys(password);
             if (driver.IsKeyboardShown())
             {
                 driver.HideKeyboard();
@@ -36,7 +38,7 @@ namespace MobileFramework
             driver.FindElementByXPath("(//*[@text='Sign in'])[2]").Click();
             string actualError = driver.FindElementByXPath("//*[contains(@text,'issue')]").Text;
 
-            Assert.AreEqual("There was an issue signing in", actualError);
+            Assert.AreEqual(expectedError, actualError);
 
         }
 
