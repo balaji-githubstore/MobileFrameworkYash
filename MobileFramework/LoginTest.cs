@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MobileFramework.Setup;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
@@ -11,41 +12,8 @@ using System.Threading;
 namespace MobileFramework
 {
     [TestClass]
-    public class LoginTest
+    public class LoginTest : AppiumSetup
     {
-        AppiumLocalService service;
-        AndroidDriver<IWebElement> driver;
-
-        [TestInitialize]
-        public void Setup()
-        {
-            OptionCollector opt = new OptionCollector()
-                  .AddArguments(GeneralOptionList.OverrideSession())
-                  .AddArguments(new KeyValuePair<string, string>("--relaxed-security", string.Empty));
-            AppiumServiceBuilder builder = new AppiumServiceBuilder().UsingAnyFreePort()
-                .WithLogFile(new System.IO.FileInfo("appium_log.txt")).WithArguments(opt);
-            //.WithAppiumJS(new System.IO.FileInfo(@"C:\Users\JiDi\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js"));
-
-            service = builder.Build(); //uses port - 4723 
-            service.Start();
-
-            AppiumOptions option = new AppiumOptions();
-            option.AddAdditionalCapability("platformName", "android");
-            option.AddAdditionalCapability("deviceName", "bala");
-            option.AddAdditionalCapability("app", @"C:\Components\khan-academy-7-3-2.apk");
-
-            driver = new AndroidDriver<IWebElement>(service, option);
-            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(20);
-        }
-
-        [TestCleanup]
-        public void Teardown()
-        {
-            driver?.Quit();
-            service?.Dispose();
-        }
-
-
         [TestMethod]
         public void InvalidCredentialTest()
         {
@@ -67,6 +35,8 @@ namespace MobileFramework
             Assert.AreEqual("There was an issue signing in", actualError);
 
         }
+
+
 
 
     }
