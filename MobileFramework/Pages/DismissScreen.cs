@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
+using OpenQA.Selenium.Appium.PageObjects.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace MobileFramework.Pages
         public DismissScreen(AndroidDriver<IWebElement> driver)
         {
             this._driver = driver;
+
         }
 
         public void ClickOnDismiss()
