@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MobileFramework.Pages;
 using MobileFramework.Setup;
 using MobileFramework.Utilities;
 using OpenQA.Selenium;
@@ -24,21 +25,24 @@ namespace MobileFramework
         [DataRow("peter", "peter123", "There was an issue signing in")]
         public void InvalidCredentialTest(string username, string password, string expectedError)
         {
+
+            DismissScreen dismiss=new DismissScreen(driver);
+            dismiss.ClickOnDismiss();
+
+            HomeScreen homeScreen=new HomeScreen(driver);
+            homeScreen.ClickOnSignIn();
+            homeScreen.ClickOnSignIn();
+
+            WelcomeScreen welcomeScreen=new WelcomeScreen(driver);
+            welcomeScreen.ClickOnSignIn();
             
-            if (driver.FindElementsByXPath("//*[@text='Dismiss']").Count > 0)
-            {
-                driver.FindElementByXPath("//*[@text='Dismiss']").Click();
-            }
-            driver.FindElementByXPath("//*[@text='Sign in']").Click();
-            driver.FindElementByXPath("//*[@text='Sign in']").Click();
-            driver.FindElementByXPath("//*[@content-desc='Enter an e-mail address or username']").SendKeys(username);
-            driver.FindElementByXPath("//*[contains(@text,'Pass')]").SendKeys(password);
-            if (driver.IsKeyboardShown())
-            {
-                driver.HideKeyboard();
-            }
-            driver.FindElementByXPath("(//*[@text='Sign in'])[2]").Click();
-            string actualError = driver.FindElementByXPath("//*[contains(@text,'issue')]").Text;
+            LoginScreen loginScreen=new LoginScreen(driver);
+            loginScreen.EnterEmailAddress(username);
+            loginScreen.EnterPassword(password);
+            loginScreen.HideKeyboardAndClickOnSignIn();
+
+          
+            string actualError = loginScreen.GetInvalidErrorMessage();
 
             Assert.AreEqual(expectedError, actualError);
 

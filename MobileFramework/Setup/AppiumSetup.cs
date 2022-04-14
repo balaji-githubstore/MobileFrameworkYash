@@ -29,7 +29,7 @@ namespace MobileFramework.Setup
             {
                 extent = new ExtentReports();
                 ExtentHtmlReporter reporter = new ExtentHtmlReporter(@"C:\Components\");
-                
+
                 extent.AttachReporter(reporter);
             }
         }
@@ -43,8 +43,12 @@ namespace MobileFramework.Setup
 
         public void ServerStart()
         {
-            if(_service !=null & !_service.IsRunning)
+            if (_service == null || !_service.IsRunning)
             {
+
+                //Environment.SetEnvironmentVariable("ANDROID_HOME", @"C:\Users\JiDi\AppData\Local\Android\Sdk");
+                //Environment.SetEnvironmentVariable("JAVA_HOME", @" C:\Program Files\Java\jdk1.8.0_291");
+
                 OptionCollector opt = new OptionCollector()
                  .AddArguments(GeneralOptionList.OverrideSession())
                  .AddArguments(new KeyValuePair<string, string>("--relaxed-security", string.Empty));
@@ -53,19 +57,17 @@ namespace MobileFramework.Setup
                 //.WithAppiumJS(new System.IO.FileInfo(@"C:\Users\JiDi\AppData\Roaming\npm\node_modules\appium\build\lib\appium.js"));
 
                 _service = builder.Build();
-                _service.Start();
+                // _service.Start();
             }
-           
+
         }
 
         [TestInitialize]
         public void Setup()
         {
-            test= extent.CreateTest(TestContext.TestName);
+            test = extent.CreateTest(TestContext.TestName);
 
-            
-
-            string environment = "cloud";
+            string environment = "local";
 
             if (environment.Equals("cloud"))
             {
@@ -95,13 +97,14 @@ namespace MobileFramework.Setup
             }
             else
             {
-                ServerStart();
+                //ServerStart();
                 AppiumOptions option = new AppiumOptions();
                 option.AddAdditionalCapability(MobileCapabilityType.PlatformName, "android");
                 option.AddAdditionalCapability(MobileCapabilityType.DeviceName, "bala");
                 option.AddAdditionalCapability(MobileCapabilityType.App, @"C:\Components\khan-academy-7-3-2.apk");
 
-                driver = new AndroidDriver<IWebElement>(_service, option);
+                //driver = new AndroidDriver<IWebElement>(_service, option);
+                driver = new AndroidDriver<IWebElement>(new Uri("http://localhost:4723/wd/hub"), option);
                 driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(20);
                 //driver.StartRecordingScreen();
             }
@@ -111,29 +114,29 @@ namespace MobileFramework.Setup
         public void Teardown()
         {
 
-            if(TestContext.CurrentTestOutcome == UnitTestOutcome.Passed)
+            if (TestContext.CurrentTestOutcome == UnitTestOutcome.Passed)
             {
                 test.Log(Status.Pass, "Test Method Name " + TestContext.TestName + "   " + TestContext.CurrentTestOutcome + " - snapshot below");
             }
-            else if(TestContext.CurrentTestOutcome == UnitTestOutcome.Failed)
+            else if (TestContext.CurrentTestOutcome == UnitTestOutcome.Failed)
             {
-                test.Log(Status.Fail, "Test Method Name " + TestContext.TestName + " "+ TestContext.CurrentTestOutcome + " - snapshot below");
+                test.Log(Status.Fail, "Test Method Name " + TestContext.TestName + " " + TestContext.CurrentTestOutcome + " - snapshot below");
             }
             else
             {
                 test.Log(Status.Skip, "Test Method Name " + TestContext.TestName + " " + TestContext.CurrentTestOutcome + " - snapshot below");
             }
 
-           
-            Screenshot screenshot= driver.GetScreenshot();
+
+            Screenshot screenshot = driver.GetScreenshot();
             test.AddScreenCaptureFromBase64String(screenshot.AsBase64EncodedString, title: TestContext.TestName);
 
-            
+
             driver?.Quit();
             _service?.Dispose();
         }
 
-        
+
 
     }
 }
