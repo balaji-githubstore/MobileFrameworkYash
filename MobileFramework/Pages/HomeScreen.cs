@@ -1,34 +1,40 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
+using OpenQA.Selenium.Support.PageObjects;
+using OpenQA.Selenium.Appium.PageObjects.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MobileFramework.Setup;
 
 namespace MobileFramework.Pages
 {
-    public class HomeScreen
+    public class HomeScreen : AppiumKeywords
     {
-        private By _homeLocator = MobileBy.AndroidUIAutomator("UiSelector().text(\"Sign in\")");
-        private By _signInLocator = MobileBy.XPath("//*[@text='Sign in']");
         
+       // private IWebElement _searchElement => WaitAndFindElement(androidLocator: new ByChained(By.Id(""), MobileBy.XPath("//*[@text='Sign in")), iosLocator: By.Id(""));
 
-        private AndroidDriver<IWebElement> driver;
-        public HomeScreen(AndroidDriver<IWebElement> driver)
+        private IWebElement _homeElement => WaitAndFindElement(androidLocator: MobileBy.AndroidUIAutomator("UiSelector().text(\"Home\")"), iosLocator: By.XPath("//*[@name='Home']"));
+
+        private IWebElement _signInElement => WaitAndFindElement(androidLocator: MobileBy.AndroidUIAutomator("UiSelector().text(\"Sign in\")"), iosLocator: By.XPath("//*[@name='Sign in']"));
+
+
+        public HomeScreen(AppiumDriver<IWebElement> driver):base(driver)
         {
-            this.driver = driver;
+
         }
 
         public bool IsHomeMenuDisplayed()
         {
-            return driver.FindElement(_homeLocator).Displayed;
+            return _homeElement.Displayed;
         }
 
         public void ClickOnHome()
         {
-            driver.FindElement(_homeLocator).Click();
+            _homeElement.Click();
         }
 
         public void ClickOnSearch()
@@ -46,7 +52,7 @@ namespace MobileFramework.Pages
 
         public void ClickOnSignIn()
         {
-            driver.FindElement(_signInLocator).Click();
+            _signInElement.Click();
         }
 
     }

@@ -5,6 +5,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
 using OpenQA.Selenium.Appium.Enums;
+using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Appium.Service;
 using OpenQA.Selenium.Appium.Service.Options;
 using System;
@@ -15,7 +16,7 @@ namespace MobileFramework.Setup
     public class AppiumSetup
     {
         private AppiumLocalService _service;
-        protected AndroidDriver<IWebElement> driver;
+        protected AppiumDriver<IWebElement> driver;
         public static ExtentReports extent;
         public static ExtentTest test;
 
@@ -68,6 +69,7 @@ namespace MobileFramework.Setup
             test = extent.CreateTest(TestContext.TestName);
 
             string environment = "local";
+            string platform = "android";
 
             if (environment.Equals("cloud"))
             {
@@ -103,40 +105,50 @@ namespace MobileFramework.Setup
                 option.AddAdditionalCapability(MobileCapabilityType.DeviceName, "bala");
                 option.AddAdditionalCapability(MobileCapabilityType.App, @"C:\Components\khan-academy-7-3-2.apk");
 
-                //driver = new AndroidDriver<IWebElement>(_service, option);
-                driver = new AndroidDriver<IWebElement>(new Uri("http://localhost:4723/wd/hub"), option);
+                if (platform.ToLower().Equals("android"))
+                {
+                    //driver = new AndroidDriver<IWebElement>(_service, option);
+                    driver = new AndroidDriver<IWebElement>(new Uri("http://localhost:4723/wd/hub"), option);
+
+                }
+                else
+                {
+                    //driver = new IOSDriver<IWebElement>(_service, option);
+                    driver = new IOSDriver<IWebElement>(new Uri("http://localhost:4723/wd/hub"), option);
+                }
+
+
                 driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(20);
                 //driver.StartRecordingScreen();
             }
         }
-
-        [TestCleanup]
-        public void Teardown()
-        {
-
-            if (TestContext.CurrentTestOutcome == UnitTestOutcome.Passed)
+            [TestCleanup]
+            public void Teardown()
             {
-                test.Log(Status.Pass, "Test Method Name " + TestContext.TestName + "   " + TestContext.CurrentTestOutcome + " - snapshot below");
+
+                if (TestContext.CurrentTestOutcome == UnitTestOutcome.Passed)
+                {
+                    test.Log(Status.Pass, "Test Method Name " + TestContext.TestName + "   " + TestContext.CurrentTestOutcome + " - snapshot below");
+                }
+                else if (TestContext.CurrentTestOutcome == UnitTestOutcome.Failed)
+                {
+                    test.Log(Status.Fail, "Test Method Name " + TestContext.TestName + " " + TestContext.CurrentTestOutcome + " - snapshot below");
+                }
+                else
+                {
+                    test.Log(Status.Skip, "Test Method Name " + TestContext.TestName + " " + TestContext.CurrentTestOutcome + " - snapshot below");
+                }
+
+
+                Screenshot screenshot = driver.GetScreenshot();
+                test.AddScreenCaptureFromBase64String(screenshot.AsBase64EncodedString, title: TestContext.TestName);
+
+
+                driver?.Quit();
+                _service?.Dispose();
             }
-            else if (TestContext.CurrentTestOutcome == UnitTestOutcome.Failed)
-            {
-                test.Log(Status.Fail, "Test Method Name " + TestContext.TestName + " " + TestContext.CurrentTestOutcome + " - snapshot below");
-            }
-            else
-            {
-                test.Log(Status.Skip, "Test Method Name " + TestContext.TestName + " " + TestContext.CurrentTestOutcome + " - snapshot below");
-            }
 
 
-            Screenshot screenshot = driver.GetScreenshot();
-            test.AddScreenCaptureFromBase64String(screenshot.AsBase64EncodedString, title: TestContext.TestName);
 
-
-            driver?.Quit();
-            _service?.Dispose();
         }
-
-
-
     }
-}

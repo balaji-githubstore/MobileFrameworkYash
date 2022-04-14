@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using MobileFramework.Setup;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
 using System;
@@ -9,27 +10,28 @@ using System.Threading.Tasks;
 
 namespace MobileFramework.Pages
 {
-    public class LoginScreen
+    public class LoginScreen : AppiumKeywords
     {
-        private By _signInLocator = MobileBy.XPath("(//*[@text='Sign in'])[2]");
-        private By _emailLocator = MobileBy.XPath("//*[@content-desc='Enter an e-mail address or username']");
-        private By _passwordLocator = MobileBy.XPath("//*[contains(@text,'Pass')]");
-        private By _errorLocator = MobileBy.XPath("//*[contains(@text,'issue')]");
+        private IWebElement _signInElement=>WaitAndFindElement(androidLocator: MobileBy.XPath("(//*[@text='Sign in'])[2]"),iosLocator: MobileBy.XPath("(//*[@name='Sign in'])[2]"));
+        private IWebElement _emailElement => WaitAndFindElement(androidLocator: MobileBy.AccessibilityId("Enter an e-mail address or username"), iosLocator: MobileBy.AccessibilityId("//*[contains(@name,'email')]"));
+        private IWebElement _passwordElement=>WaitAndFindElement(androidLocator: MobileBy.XPath("//*[contains(@text,'Pass')]"),iosLocator: MobileBy.XPath("//*[contains(@name,'Pass')]"));
+        private IWebElement _errorElement=>WaitAndFindElement(androidLocator: MobileBy.XPath("//*[contains(@text,'issue')]"),iosLocator: MobileBy.XPath("//*[contains(@text,'issue')]"));
 
 
-        private AndroidDriver<IWebElement> driver;
-        public LoginScreen(AndroidDriver<IWebElement> driver)
+
+        private AppiumDriver<IWebElement> driver;
+        public LoginScreen(AppiumDriver<IWebElement> driver):base(driver)
         {
             this.driver = driver;
         }
 
         public void EnterEmailAddress(string email)
         {
-            driver.FindElement(_emailLocator).SendKeys(email);
+            _emailElement.SendKeys(email);
         }
         public void EnterPassword(string password)
         {
-            driver.FindElement(_passwordLocator).SendKeys(password);
+            _passwordElement.SendKeys(password);
             
         }
         public void HideKeyboardAndClickOnSignIn()
@@ -38,12 +40,12 @@ namespace MobileFramework.Pages
             {
                 driver.HideKeyboard();
             }
-            driver.FindElement(_signInLocator).Click();
+           _signInElement.Click();
         }
 
         public string GetInvalidErrorMessage()
         {
-            return driver.FindElement(_errorLocator).Text; 
+            return _errorElement.Text; 
         }
     }
 }
